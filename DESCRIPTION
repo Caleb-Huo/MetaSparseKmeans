@@ -1,0 +1,14 @@
+Package: MetaSparseKmeans
+Title: An R package for MetaSparseKmeans
+Version: 0.0.3
+Authors@R: person("Zhiguang", "Huo", email = "zhuo@ufl.edu", role = c("aut", "cre"))
+Description: Implementation for Zhiguang Huo, Ying Ding, Shuchang Liu, Steffi
+    Oesterreich and George Tseng. (2015) A Sparse K-means Meta-analysis framework
+    combining multiple transcriptomic studies for disease subtype discovery. Journal
+    of the American Statistical Association. accepted.
+Depends:
+    R (>= 2.10.1), hash, combinat, sparcl
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
