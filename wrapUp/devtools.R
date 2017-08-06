@@ -29,6 +29,8 @@ devtools::check()
 ## build the package
 devtools::build()
 
+setwd(WD)
+devtools::use_vignette(name = "MetaSparseKmeans", pkg = "MetaSparseKmeans/")
 
 ## install the package
 remove.packages("MetaSparseKmeans")
@@ -37,8 +39,6 @@ devtools::install()
 install.packages("../MetaSparseKmeans_0.0.3.tar.gz",repos=NULL,type="source")
 
 
-setwd(WD)
-devtools::use_vignette(name = "MetaSparseKmeans", pkg = "MetaSparseKmeans/")
 
 browseVignettes("MetaSparseKmeans")
 

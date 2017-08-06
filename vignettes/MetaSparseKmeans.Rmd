@@ -4,7 +4,7 @@ author: "Zhiguang Huo"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  \VignetteIndexEntry{MetaSparseKmeans}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

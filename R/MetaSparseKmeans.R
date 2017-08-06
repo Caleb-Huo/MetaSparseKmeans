@@ -46,7 +46,7 @@
 ##' @export
 ##' @examples
 ##' ######################################
-##' ## use browseVignettes("MetaSparseKmeans") to see a comprehensive explanation.
+##' ## use browseVignettes('MetaSparseKmeans') to see a comprehensive explanation.
 ##' ######################################
 ##' ## generate data
 ##' set.seed(15213)

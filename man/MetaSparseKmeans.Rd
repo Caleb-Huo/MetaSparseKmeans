@@ -39,14 +39,7 @@ The result with the best objective score will be used.}
 maxiter specifies the max number of iteration for MetaSparseKmeans}
 
 \item{lambda}{A tuning parameter controlling the balance between separation ability (BCSS/TSS) and matching function.
-lambda is set to be 1/2 by default.
-1, exhaustive. 2, linear. 3, MCMC.
-exhaustive will perform exhaustive search and it has 100 percent accurate but very time consuming if the configuration space is too large.
-linear will perform stepwise search. The searching is very efficient but yield less accurate if the data is noisy.
-MCMC combine stepwise search and simulated anealling.
-It utilizes the stepwise search result as initial and perform simulated anealling to find the best matching.
-MCMC is suggested when the configuration space is too large.In the manuscript, we suggested 14,400 to be the cutoff.
-If the total number of configurations is greater than 14,400, MCMC is suggested and otherwise exhaustive is suggested.}
+lambda is set to be 1/2 by default.}
 
 \item{sampleSizeAdjust}{logical argument,
 controlling whether to adjust for sample size.
@@ -75,6 +68,8 @@ American Statistical Association. 111, no. 513 (2016): 27-42.
 Here is the instruction about the input
 }
 \examples{
+######################################
+## use browseVignettes('MetaSparseKmeans') to see a comprehensive explanation.
 ######################################
 ## generate data
 set.seed(15213)
@@ -206,7 +201,7 @@ getWsHeatmap(t(S[[2]]),label2,main='two study before metaSparseKMeans, S2')
 
 ## perform meta sparse Kmeans
 
-res = MetaSparseKmeans(x=S,K=3,wbounds=10,lambda=2)
+res = MetaSparseKmeans(x=S,K=3,wbounds=10,lambda=0.5)
 
 ## visualize the result
 

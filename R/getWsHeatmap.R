@@ -37,7 +37,7 @@
 ##'
 ##' G0 = G*P0  # nonDE genes
 ##' G1 = G*P1  # DE H-L
-##' G2 = G*P2\t# DE L-H
+##' G2 = G*P2  # DE L-H
 ##' G3 = G*P3
 ##' G4 = G*P4
 ##'

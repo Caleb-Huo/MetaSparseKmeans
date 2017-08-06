@@ -48,7 +48,7 @@ sd = 0.5
 
 G0 = G*P0  # nonDE genes
 G1 = G*P1  # DE H-L
-G2 = G*P2\\t# DE L-H
+G2 = G*P2 # DE L-H
 G3 = G*P3
 G4 = G*P4
 
@@ -104,11 +104,11 @@ P3 = 0.1 #noise in S1
 P4 = 0.1 #noise in S2
 sd = 0.5
 
-G0 = G*P0\\t# nonDE genes
-G1 = G*P1\\t# DE H-L
-G2 = G*P2\\t# DE L-H
-G3 = G*P3\\t#noise in S1
-G4 = G*P4\\t#noise in S2
+G0 = G*P0  # nonDE genes
+G1 = G*P1  # DE H-L
+G2 = G*P2  # DE L-H
+G3 = G*P3  #noise in S1
+G4 = G*P4  #noise in S2
 
 mu211 = runif(G1,-0.25,0.25)
 mu212 = runif(G1,0.5,1)

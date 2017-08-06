@@ -291,7 +291,7 @@ patternMatch <- function(x, Cs, ws, silence = FALSE) {
     while (permFlag[1] == 1) {
         
         tmpEng <- iniEnergy[S]
-        #print(tmpEng/choose(S, 2))
+        # print(tmpEng/choose(S, 2))
         if (tmpEng > highEng) {
             highEng = tmpEng
             resCs = tmpCs
