@@ -1,5 +1,5 @@
-# metaSparseKmeans
-Github repository for metaSparseKmeans
+# MetaSparseKmeans
+Github repository for MetaSparseKmeans
 
 ## Required Package
 * sparcl
@@ -16,7 +16,7 @@ install_github("Caleb-Huo/MetaSparseKmeans")
 ```
 
 * Or install from a released package
-install.packages("metaSparseKmeans_0.0.3.tar.gz",repos=NULL,type="source")
+install.packages("MetaSparseKmeans_0.0.3.tar.gz",repos=NULL,type="source")
 
 ## How to use this R package:
 
