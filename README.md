@@ -16,9 +16,9 @@ install_github("Caleb-Huo/MetaSparseKmeans", build_vignettes=TRUE)
 ```
 
 * Or install from a released package.
-- First, download the latest released package 
+    - First, download the latest released package 
 [https://github.com/Caleb-Huo/MetaSparseKmeans/releases](https://github.com/Caleb-Huo/MetaSparseKmeans/releases)
-- Install this downloaded package directly.
+    - Install this downloaded package directly.
 ```R
 install.packages("MetaSparseKmeans_0.0.3.tar.gz",repos=NULL,type="source")
 ```
