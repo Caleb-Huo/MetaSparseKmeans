@@ -29,8 +29,6 @@ devtools::check()
 ## build the package
 devtools::build()
 
-setwd(WD)
-devtools::use_vignette(name = "MetaSparseKmeans", pkg = "MetaSparseKmeans/")
 
 ## install the package
 remove.packages("MetaSparseKmeans")
@@ -39,15 +37,13 @@ devtools::install()
 install.packages("../MetaSparseKmeans_0.0.3.tar.gz",repos=NULL,type="source")
 
 
-
-browseVignettes("MetaSparseKmeans")
-
 ## use the package
 library(MetaSparseKmeans)
 S = list(t(S1),t(S2), t(S2))
 ?MetaSparseKmeans
 
 if(F){
+  browseVignettes("MISKmeans")
   browseVignettes()
 }
 
@@ -58,6 +54,7 @@ if(F){
   ntrial = 1
   maxiter = 20
   lambda = 1/2
+  method = "exhaustive"
   sampleSizeAdjust = FALSE
   wsPre = NULL
   silence = FALSE
@@ -66,6 +63,6 @@ if(F){
   awbound <- 10
 
   S = list(t(S1),t(S2), t(S2))
-  res = MetaSparseKmeans(x=S,K=3,wbounds=10,lambda=0.5)
+  res = MetaSparseKmeans(x=S,K=3,wbounds=10,lambda=2)
 }
 
