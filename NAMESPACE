@@ -2,3 +2,4 @@
 
 export(MetaSparseKmeans)
 export(gapStat_MSKM)
+export(getWsHeatmap)

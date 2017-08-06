@@ -1,7 +1,7 @@
 ##' Implementation for Zhiguang Huo, Ying Ding, Shuchang Liu, Steffi Oesterreic
-##' and George Tseng. (2015) A Sparse K-means Meta-analysis framework combining
+##' and George Tseng. A Sparse K-means Meta-analysis framework combining
 ##' multiple transcriptomic studies for disease subtype discovery. Journal of the
-##' American Statistical Association. accepted.
+##' American Statistical Association. 111, no. 513 (2016): 27-42.
 ##'
 ##' Here is the instruction about the input
 ##' @title Main function to perform MetaSparseKmeans.
@@ -30,13 +30,6 @@
 ##' maxiter specifies the max number of iteration for MetaSparseKmeans
 ##' @param lambda A tuning parameter controlling the balance between separation ability (BCSS/TSS) and matching function.
 ##' lambda is set to be 1/2 by default.
-##' 1, exhaustive. 2, linear. 3, MCMC.
-##' exhaustive will perform exhaustive search and it has 100 percent accurate but very time consuming if the configuration space is too large.
-##' linear will perform stepwise search. The searching is very efficient but yield less accurate if the data is noisy.
-##' MCMC combine stepwise search and simulated anealling.
-##' It utilizes the stepwise search result as initial and perform simulated anealling to find the best matching.
-##' MCMC is suggested when the configuration space is too large.In the manuscript, we suggested 14,400 to be the cutoff.
-##' If the total number of configurations is greater than 14,400, MCMC is suggested and otherwise exhaustive is suggested.
 ##' @param sampleSizeAdjust logical argument,
 ##' controlling whether to adjust for sample size.
 ##' If true, that means study with larger sample size will have a larger impact.
@@ -52,6 +45,8 @@
 ##' @author Zhiguang Huo
 ##' @export
 ##' @examples
+##' ######################################
+##' ## use browseVignettes("MetaSparseKmeans") to see a comprehensive explanation.
 ##' ######################################
 ##' ## generate data
 ##' set.seed(15213)
@@ -183,7 +178,7 @@
 ##'
 ##' ## perform meta sparse Kmeans
 ##'
-##' res = MetaSparseKmeans(x=S,K=3,wbounds=10,lambda=2)
+##' res = MetaSparseKmeans(x=S,K=3,wbounds=10,lambda=0.5)
 ##'
 ##' ## visualize the result
 ##'
@@ -194,15 +189,23 @@
 ##'
 ##' plot(res$ws,main='metaSparseKmeans weight dist',xlab='geneIndex')
 ##'
-MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 1, maxiter = 20, 
-    lambda = 1/2, sampleSizeAdjust = FALSE, wsPre = NULL, silence = FALSE) {
-    # x is list of data, (nxp) for each study wbounds is a vector of L1 constraints on w,
-    # of the form sum(abs(w))<=wbounds[i] nstart: initial Kmeans searching space.
-    # maxiter: maximum number of iterations.  lambda: a tuning parameter keeping the
-    # balance between separation and wsPre: if specified, the initial weight.  silence: if
-    # print some details
+MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 1, maxiter = 20, lambda = 1/2, 
+    sampleSizeAdjust = FALSE, wsPre = NULL, silence = FALSE) {
     
     ## check input
+    if (length(x) < 2) {
+        stop("length of x must be greater or equal to 2.")
+    }
+    if (!all(sapply(x, ncol) == ncol(x[[1]]))) {
+        stop("all studies must have equal number of genes (ncol)")
+    }
+    if (is.null(K)) {
+        stop("must specify number of clusters K")
+    }
+    if (K < 3) {
+        stop("number of clusters K must be greater than 2")
+    }
+    
     
     ## get some basic information
     numStudies = length(x)
@@ -231,8 +234,7 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
                 stop("there is no name for wsPre")
             if (any(names(wsPre) != colnames(x[[1]]))) 
                 stop("name of wsPre differs from gene name")
-            for (i in 1:numStudies) Cs0[[i]] <- weightedKMeans(x = t(x[[i]]), K = K, ws = wsPre, 
-                tss.x = tss.x[[i]])
+            for (i in 1:numStudies) Cs0[[i]] <- weightedKMeans(x = t(x[[i]]), K = K, ws = wsPre, tss.x = tss.x[[i]])
         }
         # 
         for (w in 1:length(wbounds)) {
@@ -257,7 +259,6 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
                   Cs <- UpdateCs(x, K, ws, Cs, tss.x, nstart = nstart)  # if niter=1, no need to update!!
                 
                 fmatch = patternMatch(x, Cs, ws, silence = silence)
-                # patternMatch_old(x, Cs, ws, silence = silence)
                 ratio = GetRatio(x, Cs, tss.x, sampleSizeAdjust = sampleSizeAdjust)
                 ws <- UpdateWs(x, Cs, awbound, ratio, lambda * (fmatch$perEng + 1)/2)
                 store.ratio <- c(store.ratio, sum(ratio * ws))
@@ -287,6 +288,6 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
     if (length(bestOut) == 1) {
         bestOut = bestOut[[1]]
     }
-    class(bestOut) <- "metaSparseKmeans"
+    class(bestOut) <- "MetaSparseKmeans"
     return(bestOut)
 }

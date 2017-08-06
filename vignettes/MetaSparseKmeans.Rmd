@@ -1,0 +1,192 @@
+---
+title: "Vignette for Meta Sparse Kmeans"
+author: "Zhiguang Huo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+`MetaSparseKmeans` aims to perform sample clustering on multiple transcriptomic studies.
+Three goals are acheived simultanously.
+
+1. Sample clustering will be performed in each study.
+2. Clustering pattern will be consistent across studies.
+3. A small subset of intrinsic genes with the will be selected.
+
+## Reference
+Huo, Z., Ding, Y., Liu, S., Oesterreich, S., & Tseng, G. (2016). Meta-analytic framework for sparse K-means to identify disease subtypes in multiple transcriptomic studies. Journal of the American Statistical Association, 111(513), 27-42.
+
+## How to install this R package?
+Refer to [https://github.com/Caleb-Huo/MetaSparseKmeans](https://github.com/Caleb-Huo/MetaSparseKmeans)
+
+## Important input
+
+- x: A list for several microarray studies. Each element of the list should be a p*n matrix. p is number of features and n is number of samples. Clustering is performed on sample level. p has to be the same for each study. Missing value should be set to be NA. Current version won't support missing value, it will be allowed in the next version.
+
+- K: K specifies number of clusters. We assume the number of clusters to be the same in each study.
+
+- wbounds: wbounds is the tuning parameter that controls number of selected features. Larger tuning parameter yield more selected features. wbounds could be a number or a vector. wbounds is suggested to be selected using prior information (e.g. which tuning parameter generate best survival difference.)
+
+## Tuning parameter:
+
+- K: suggest to be selected in each individual study (after filtering) using gap statistics. Then choose a common K.
+- wbounds: can be tuned using `gapStat_MSKM()` function. However, in real data, this approach is time comsuming and often ends up with more genes. Users are suggested to use a sequence of wbounds and select the best one with the best biological interpretation.
+- lambda: suggest to use the default value 1/2.
+
+## Usage
+
+### generate two studies.
+
+```{r}
+library(MetaSparseKmeans)
+```
+
+```{r}
+set.seed(15213)
+
+G = 1000
+n11 = 100
+n12 = 100
+n13 = 150
+label1 = c(rep(1,n11),rep(2,n12),rep(3,n13))
+
+P0 = 0.6
+P1 = 0.1
+P2 = 0.1
+P3 = 0.1
+P4 = 0.1
+sd = 0.5
+
+G0 = G*P0  # nonDE genes
+G1 = G*P1  # DE H-L
+G2 = G*P2  # DE L-H
+G3 = G*P3
+G4 = G*P4
+
+
+mu111 = runif(G1,-0.25,0.25)
+mu112 = runif(G1,0.5,1)
+mu113 = runif(G1,-1,-0.5)
+
+mu121 = runif(G2,-1,-0.5)
+mu122 = runif(G2,-0.25,0.25)
+mu123 = runif(G2,0.5,1)
+
+mu131 = runif(G3,-1,-0.5)
+mu132 = runif(G3,-0.25,0.25)
+mu133 = runif(G3,0.5,1)
+
+mu14 = runif(G4,-0.25,0.25)
+mu10 = runif(G0,-0.25,0.25)
+
+Data111 = matrix(rnorm(n11*G1,mu111,sd^2),nrow=G1)
+Data112 = matrix(rnorm(n12*G1,mu112,sd^2),nrow=G1)
+Data113 = matrix(rnorm(n13*G1,mu113,sd^2),nrow=G1)
+Data11 = cbind(Data111,Data112,Data113)
+
+Data121 = matrix(rnorm(n11*G2,mu121,sd^2),nrow=G2)
+Data122 = matrix(rnorm(n12*G2,mu122,sd^2),nrow=G2)
+Data123 = matrix(rnorm(n13*G2,mu123,sd^2),nrow=G2)
+Data12 = cbind(Data121,Data122,Data123)
+
+Data131 = matrix(rnorm(n11*G3,mu131,sd^2),nrow=G3)
+Data132 = matrix(rnorm(n12*G3,mu132,sd^2),nrow=G3)
+Data133 = matrix(rnorm(n13*G3,mu133,sd^2),nrow=G3)
+Data13 = cbind(Data131,Data132,Data133)
+
+Data14 = matrix(rnorm((n11+n12+n13)*G4,mu14,sd^2),nrow=G4)
+
+Data10 = matrix(rnorm((n11+n12+n13)*G0,mu10,sd^2),nrow=G0)
+
+S1 = rbind(Data10,Data11,Data12,Data13,Data14)
+
+
+G = 1000
+n21 = 150
+n22 = 100
+n23 = 100
+
+label2 = c(rep(1,n21),rep(2,n22),rep(3,n23))
+
+P0 = 0.6
+P1 = 0.1 #common features
+P2 = 0.1 #common features
+P3 = 0.1 #noise in S1
+P4 = 0.1 #noise in S2
+sd = 0.5
+
+G0 = G*P0  # nonDE genes
+G1 = G*P1  # DE H-L
+G2 = G*P2  # DE L-H
+G3 = G*P3  #noise in S1
+G4 = G*P4  #noise in S2
+
+mu211 = runif(G1,-0.25,0.25)
+mu212 = runif(G1,0.5,1)
+mu213 = runif(G1,-1,-0.5)
+
+mu221 = runif(G2,-1,-0.5)
+mu222 = runif(G2,-0.25,0.25)
+mu223 = runif(G2,0.5,1)
+
+mu23 = runif(G3,-0.25,0.25)
+
+mu241 = runif(G4,-1,-0.5)
+mu242 = runif(G4,-0.25,0.25)
+mu243 = runif(G4,0.5,1)
+
+mu20 = runif(G0,-0.25,0.25)
+
+Data211 = matrix(rnorm(n21*G1,mu211,sd^2),nrow=G1)
+Data212 = matrix(rnorm(n22*G1,mu212,sd^2),nrow=G1)
+Data213 = matrix(rnorm(n23*G1,mu213,sd^2),nrow=G1)
+Data21 = cbind(Data211,Data212,Data213)
+
+Data221 = matrix(rnorm(n21*G2,mu221,sd^2),nrow=G2)
+Data222 = matrix(rnorm(n22*G2,mu222,sd^2),nrow=G2)
+Data223 = matrix(rnorm(n23*G2,mu223,sd^2),nrow=G2)
+Data22 = cbind(Data221,Data222,Data223)
+
+Data23 = matrix(rnorm((n21+n22+n23)*G3,mu23,sd^2),nrow=G3)
+
+Data241 = matrix(rnorm(n21*G4,mu241,sd^2),nrow=G4)
+Data242 = matrix(rnorm(n22*G4,mu242,sd^2),nrow=G4)
+Data243 = matrix(rnorm(n23*G4,mu243,sd^2),nrow=G4)
+Data24 = cbind(Data241,Data242,Data243)
+
+
+Data20 = matrix(rnorm((n21+n22+n23)*G0,mu20,sd^2),nrow=G0)
+
+S2 = rbind(Data20,Data21,Data22,Data23,Data24)
+S = list(t(S1),t(S2))
+```
+
+### visualize the data
+
+```{r}
+getWsHeatmap(t(S[[1]]),label1)
+
+getWsHeatmap(t(S[[2]]),label2)
+
+```
+
+### perform meta sparse Kmeans
+```{r}
+
+res = MetaSparseKmeans(x=S,K=3,wbounds=10,lambda=0.5)
+```
+
+### visualize the result
+
+```{r}
+
+getWsHeatmap(t(S[[1]]),res$Cs[[1]],res$ws)
+
+getWsHeatmap(t(S[[2]]),res$Cs[[2]],res$ws)
+
+plot(res$ws,xlab='geneIndex')
+```
+

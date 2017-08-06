@@ -161,8 +161,7 @@ gapStat_MSKM <- function(S, K = 3, B = 10, wbounds = NULL, nvals = 10, silence =
     E.score.full <- NULL
     
     if (!silence) 
-        cat("calculating gap stat, b = 1,2,..., B (= ", B, ")  [one \".\" per sample]:\n", 
-            sep = "")
+        cat("calculating gap stat, b = 1,2,..., B (= ", B, ")  [one \".\" per sample]:\n", sep = "")
     
     for (b in 1:B) {
         cat(".", if (b%%50 == 0) 

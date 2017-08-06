@@ -67,9 +67,9 @@ The returning result could be a list or a list vector, depending whether the inp
 }
 \description{
 Implementation for Zhiguang Huo, Ying Ding, Shuchang Liu, Steffi Oesterreic
-and George Tseng. (2015) A Sparse K-means Meta-analysis framework combining
+and George Tseng. A Sparse K-means Meta-analysis framework combining
 multiple transcriptomic studies for disease subtype discovery. Journal of the
-American Statistical Association. accepted.
+American Statistical Association. 111, no. 513 (2016): 27-42.
 }
 \details{
 Here is the instruction about the input

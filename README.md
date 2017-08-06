@@ -4,6 +4,7 @@ Github repository for metaSparseKmeans
 ## Required Package
 * sparcl
 * combinat
+* hash
 
 ## Install This Package from github
 First you need R `devtools` package installed.
