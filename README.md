@@ -12,7 +12,7 @@ First you need R `devtools` package installed.
 * In R console
 ```R
 library(devtools)
-install_github("Caleb-Huo/MetaSparseKmeans")
+install_github("Caleb-Huo/MetaSparseKmeans", build_vignettes=TRUE)
 ```
 
 * Or install from a released package
