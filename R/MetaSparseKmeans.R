@@ -225,7 +225,7 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
         # initialize initialize cluster by KMeans initialize w
         if (is.null(wsPre)) {
             for (i in 1:numStudies) {
-                Cs0[[i]] <- kmeans(x[[i]], centers = K, nstart = nstart)$cluster
+                Cs0[[i]] <- KMeansSparseCluster(x[[i]], K=K, wbounds=wbounds[1])[[1]]$Cs
             }
         } else {
             if (length(wsPre) != ncol(x[[1]])) 
