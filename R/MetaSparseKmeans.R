@@ -243,7 +243,7 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
         for (w in 1:length(wbounds)) {
             awbound = wbounds[w]
 			
-			wsPre <- wsPre
+			ws <- wsPre
                  
             ws.old <- rnorm(ncol(x[[1]]))
             store.ratio <- NULL
