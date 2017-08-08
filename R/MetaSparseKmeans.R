@@ -224,8 +224,11 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
     for (atrail in 1:ntrial) {
         # initialize initialize cluster by KMeans initialize w
         if (is.null(wsPre)) {
+			wsPre <- numeric(ncol(x[[1]]))
             for (i in 1:numStudies) {
-                Cs0[[i]] <- KMeansSparseCluster(x[[i]], K=K, wbounds=wbounds[1])[[1]]$Cs
+				asparcl <- KMeansSparseCluster(x[[i]], K=K, wbounds=wbounds[1])[[1]]
+                Cs0[[i]] <- asparcl$Cs
+				wsPre <- wsPre + asparcl$ws/numStudies
             }
         } else {
             if (length(wsPre) != ncol(x[[1]])) 
@@ -239,12 +242,9 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
         # 
         for (w in 1:length(wbounds)) {
             awbound = wbounds[w]
-            if (!is.null(wsPre)) {
-                ws = wsPre
-            } else {
-                ws <- rep(1, ncol(x[[1]]))/(ncol(x[[1]])) * awbound  # Start with equal weights on each feature
-            }
-            
+			
+			wsPre <- wsPre
+                 
             ws.old <- rnorm(ncol(x[[1]]))
             store.ratio <- NULL
             niter <- 0
@@ -258,11 +258,14 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
                 if (niter > 1) 
                   Cs <- UpdateCs(x, K, ws, Cs, tss.x, nstart = nstart)  # if niter=1, no need to update!!
                 
+                #fmatch = patternMatch(x, Cs, ws, silence = silence)
                 fmatch = patternMatch(x, Cs, ws, silence = silence)
+				
+				
                 ratio = GetRatio(x, Cs, tss.x, sampleSizeAdjust = sampleSizeAdjust)
                 ws <- UpdateWs(x, Cs, awbound, ratio, lambda * (fmatch$perEng + 1)/2)
                 store.ratio <- c(store.ratio, sum(ratio * ws))
-                
+                print(Map(adjustedRandIndex, fmatch$matchCs, label))
                 if (!silence) {
                   cat("iteration:")
                   cat(niter)
@@ -270,8 +273,7 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
                   cat("convergence criteria: ")
                   cat(sum(abs(ws - ws.old))/sum(abs(ws.old)))
                   cat("\n")
-                }
-                
+                }                
             }
             score = sum((ratio + lambda * (fmatch$perEng + 1)/2) * ws)
             names(ws) <- colnames(x[[1]])
