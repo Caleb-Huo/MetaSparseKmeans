@@ -233,7 +233,8 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
 					wsPre <- wsPre + asparcl$ws/numStudies
 	            }				
 			} else {
-				wsPre <- rep(1/sqrt(p),p)			
+				wsPre[] <- 1/sqrt(p)
+                Cs <- Cs <- kmeans(x, centers=K, nstart=nstart)$cluster	
 			}
         } else {
             if (length(wsPre) != p) 
