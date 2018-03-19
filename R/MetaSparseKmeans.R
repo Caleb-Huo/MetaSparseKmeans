@@ -233,12 +233,12 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
 					wsPre <- wsPre + asparcl$ws/numStudies
 	            }				
 			} else {
-				wsPre[] <- 1/sqrt(p)
+				wsPre0 <- Reduce("+",tss.x)
+				wsPre <- wsPre0/sum(wsPre0^2)
 	            for (i in 1:numStudies) {
-					asparcl <- KMeansSparseCluster(x[[i]], K=K, wbounds=wbounds[1])[[1]]
-	                Cs0[[i]] <- kmeans(x[[i]], centers=K, nstart=nstart)$cluster	
-	            }	
-                
+				    ax <- sweep(x[[i]], 2, sqrt(wsPre), "*")					
+	                Cs0[[i]] <- kmeans(ax, centers=K, nstart=nstart)$cluster	
+	            }	                
 			}
         } else {
             if (length(wsPre) != p) 
