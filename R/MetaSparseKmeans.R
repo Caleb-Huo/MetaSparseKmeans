@@ -224,7 +224,8 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
     for (atrail in 1:ntrial) {
         # initialize initialize cluster by KMeans initialize w
         if (is.null(wsPre)) {
-			wsPre <- numeric(ncol(x[[1]]))
+			p <- ncol(x[[1]])
+			wsPre <- numeric(p)
 			if(sparseStart){
 	            for (i in 1:numStudies) {
 					asparcl <- KMeansSparseCluster(x[[i]], K=K, wbounds=wbounds[1])[[1]]
@@ -232,10 +233,10 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
 					wsPre <- wsPre + asparcl$ws/numStudies
 	            }				
 			} else {
-				wsPre <- rep(1/sqrt(x[[1]]),x[[1]])			
+				wsPre <- rep(1/sqrt(p),p)			
 			}
         } else {
-            if (length(wsPre) != ncol(x[[1]])) 
+            if (length(wsPre) != p) 
                 stop("length of wsPre differs from number of genes")
             if (is.null(names(wsPre))) 
                 stop("there is no name for wsPre")
