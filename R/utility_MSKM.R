@@ -142,8 +142,8 @@ weightedKMeans <- function(x, K, ws, tss.x = NULL) {
 UpdateCs <- function(x, K, ws, Cs, tss.x, nstart = nstart) {
     newCs <- list()
     for (i in 1:length(x)) {
-        x[[i]] <- x[[i]][, ws != 0]
-        z <- sweep(x[[i]], 2, sqrt((ws/tss.x[[i]])[ws != 0]), "*")
+        x[[i]] <- x[[i]][, ws != 0 & tss.x[[i]] != 0]
+        z <- sweep(x[[i]], 2, sqrt((ws/tss.x[[i]])[ws != 0  & tss.x[[i]] != 0]), "*")
         nrowz <- nrow(z)
         mus <- NULL
         if (!is.null(Cs[[i]])) {
