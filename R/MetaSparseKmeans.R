@@ -190,7 +190,7 @@
 ##' plot(res$ws,main='metaSparseKmeans weight dist',xlab='geneIndex')
 ##'
 MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 1, maxiter = 20, lambda = 1/2, 
-    sampleSizeAdjust = FALSE, wsPre = NULL, sparseStart=TRUE,  silence = FALSE) {
+    sampleSizeAdjust = FALSE, wsPre = NULL, iniWbound = 20, sparseStart=TRUE,  silence = FALSE) {
     
     ## check input
     if (length(x) < 2) {
@@ -202,7 +202,7 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
     if (is.null(K)) {
         stop("must specify number of clusters K")
     }
-    if (K < 3) {
+    if (K < 2) {
         stop("number of clusters K must be greater than 2")
     }
     
@@ -228,7 +228,7 @@ MetaSparseKmeans <- function(x, K = NULL, wbounds = NULL, nstart = 20, ntrial = 
 			wsPre <- numeric(p)
 			if(sparseStart){
 	            for (i in 1:numStudies) {
-					asparcl <- KMeansSparseCluster(x[[i]], K=K, wbounds=wbounds[1])[[1]]
+					asparcl <- KMeansSparseCluster(x[[i]], K=K, wbounds=iniWbound)[[1]]
 	                Cs0[[i]] <- asparcl$Cs
 					wsPre <- wsPre + asparcl$ws/numStudies
 	            }				
